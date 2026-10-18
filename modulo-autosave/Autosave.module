@@ -1,0 +1,8 @@
+{
+  "IsEnabled": true,
+  "Name": "UtAutosave",
+  "Version": "1.0.0.0",
+  "Assemblies": [
+    { "Path": "/UtAutosave.dll", "Role": "Server" }
+  ]
+}

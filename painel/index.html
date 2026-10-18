@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel Unturned</title>
+<link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2384cc16'/><text x='16' y='23' font-size='19' text-anchor='middle' font-family='Arial' font-weight='bold' fill='%2310160a'>U</text></svg>">
+<style>
+:root {
+  --bg: #0b0e0c; --painel: #131815; --painel2: #1a201c; --painel3: #232b26; --borda: #252d28; --borda2: #36403a;
+  --texto: #e6ebe7; --fraco: #8f9b92; --fraco2: #67736b;
+  --verde: #84cc16; --verde-esc: #4d7c0f; --verde-bg: rgba(132, 204, 22, .12);
+  --vermelho: #f05252; --vermelho-bg: rgba(240, 82, 82, .12);
+  --amarelo: #e3a008; --amarelo-bg: rgba(227, 160, 8, .12);
+  --azul: #3f9cf0; --azul-bg: rgba(63, 156, 240, .12); --roxo: #a78bfa; --roxo-bg: rgba(167, 139, 250, .12);
+  --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --raio: 12px;
+}
+* { box-sizing: border-box; }
+html { color-scheme: dark; }
+body { margin: 0; background: var(--bg); color: var(--texto); font: 14px/1.45 system-ui, "Segoe UI", sans-serif; overflow-x: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; }
+code { font-family: var(--mono); font-size: .92em; }
+
+/* ---------- Topo ---------- */
+header { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px; padding: 10px 24px; background: rgba(19, 24, 21, .92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--borda); }
+.marca { width: 32px; height: 32px; border-radius: 9px; background: var(--verde); color: #10160a; display: grid; place-items: center; font-weight: 800; font-size: 18px; flex: none; }
+.titulo { display: flex; flex-direction: column; min-width: 0; }
+.titulo h1 { font-size: 16px; margin: 0; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.titulo small { color: var(--fraco); font-size: 12px; }
+.pill { display: inline-flex; align-items: center; gap: 7px; padding: 3px 11px; border-radius: 99px; font-size: 12.5px; font-weight: 600; background: var(--painel2); border: 1px solid var(--borda); white-space: nowrap; }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent); }
+.e-rodando { color: var(--verde); } .e-parado { color: var(--fraco); } .e-iniciando, .e-atualizando, .e-parando, .e-aguardando-reinicio { color: var(--amarelo); }
+.e-iniciando::before, .e-atualizando::before, .e-parando::before, .e-aguardando-reinicio::before { animation: pisca 1s infinite; }
+@keyframes pisca { 50% { opacity: .25; } }
+nav { display: flex; gap: 2px; margin-left: auto; background: var(--painel2); border: 1px solid var(--borda); padding: 3px; border-radius: 10px; }
+nav button { display: inline-flex; align-items: center; gap: 7px; background: none; border: 0; padding: 6px 13px; border-radius: 7px; color: var(--fraco); cursor: pointer; white-space: nowrap; }
+nav button:hover { color: var(--texto); }
+nav button[aria-selected="true"] { background: var(--painel3); color: var(--texto); box-shadow: 0 1px 2px #0006; }
+
+main { padding: 18px 24px 90px; max-width: 1560px; margin: 0 auto; }
+
+/* ---------- Botões e campos ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--borda2); background: var(--painel2); cursor: pointer; white-space: nowrap; transition: background .12s, border-color .12s; }
+.btn:hover:not(:disabled) { background: var(--painel3); border-color: #4a564e; }
+.btn:disabled { opacity: .38; cursor: not-allowed; }
+.btn.prim { background: var(--verde); color: #10160a; border-color: var(--verde); font-weight: 600; }
+.btn.prim:hover:not(:disabled) { background: #96dd25; border-color: #96dd25; }
+.btn.perigo { color: #ff8a8a; }
+.btn.perigo:hover:not(:disabled) { background: var(--vermelho-bg); border-color: #7a2e2e; }
+.btn.perigo-cheio { background: var(--vermelho); border-color: var(--vermelho); color: #fff; font-weight: 600; }
+.btn.fantasma { background: transparent; border-color: transparent; color: var(--fraco); }
+.btn.fantasma:hover:not(:disabled) { color: var(--texto); background: var(--painel3); }
+.btn.peq { padding: 4px 9px; font-size: 12.5px; gap: 5px; border-radius: 7px; }
+.btn.peq svg.i { width: 14px; height: 14px; }
+.btn.icone { padding: 5px; }
+select, input[type=text], input[type=number], input[type=password], input[type=search], textarea { background: var(--bg); border: 1px solid var(--borda2); border-radius: 8px; padding: 7px 10px; min-width: 0; }
+select:focus, input:focus, textarea:focus { outline: 2px solid var(--verde-esc); outline-offset: -1px; }
+input.invalido { border-color: var(--vermelho); outline-color: var(--vermelho); }
+.campo-icone { position: relative; display: flex; align-items: center; }
+.campo-icone > svg.i { position: absolute; left: 9px; color: var(--fraco2); pointer-events: none; }
+.campo-icone input { padding-left: 31px; }
+
+/* Interruptor */
+.switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; color: var(--fraco); font-size: 12.5px; white-space: nowrap; }
+.switch input { appearance: none; margin: 0; width: 30px; height: 17px; border-radius: 99px; background: var(--painel3); border: 1px solid var(--borda2); position: relative; cursor: pointer; transition: background .15s; flex: none; }
+.switch input::after { content: ""; position: absolute; top: 2px; left: 2px; width: 11px; height: 11px; border-radius: 50%; background: var(--fraco); transition: transform .15s, background .15s; }
+.switch input:checked { background: var(--verde-esc); border-color: var(--verde-esc); }
+.switch input:checked::after { transform: translateX(13px); background: #eaffc9; }
+.switch.grande input { width: 40px; height: 22px; }
+.switch.grande input::after { width: 16px; height: 16px; }
+.switch.grande input:checked::after { transform: translateX(18px); }
+
+/* ---------- Cards ---------- */
+.card { background: var(--painel); border: 1px solid var(--borda); border-radius: var(--raio); display: flex; flex-direction: column; min-width: 0; }
+.card-topo { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--borda); flex-wrap: wrap; }
+.card-topo h2 { font-size: 13px; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 8px; }
+.card-topo h2 svg.i { color: var(--fraco); }
+.card-topo .dir { margin-left: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.contador { font-size: 12px; color: var(--fraco); font-variant-numeric: tabular-nums; }
+.vazio { color: var(--fraco); padding: 22px 14px; text-align: center; font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.vazio svg.i { width: 26px; height: 26px; color: var(--fraco2); }
+.oculto { display: none !important; }
+
+/* ---------- Barra de controles ---------- */
+.controles { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: flex-end; margin-bottom: 14px; }
+.grupo { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.grupo > span { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--fraco2); font-weight: 600; }
+.grupo > div { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+#mapa { min-width: 250px; height: 36px; }
+.controles .btn { height: 36px; }
+.grupo.dir { margin-left: auto; }
+
+/* ---------- KPIs ---------- */
+.kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.kpi { background: var(--painel); border: 1px solid var(--borda); border-radius: var(--raio); padding: 11px 14px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.kpi .rot { display: flex; align-items: center; gap: 6px; color: var(--fraco); font-size: 12px; }
+.kpi .rot svg.i { width: 14px; height: 14px; }
+.kpi .val { font-size: 18px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.kpi .val.apagado { color: var(--fraco2); }
+.kpi .sub { font-size: 11.5px; color: var(--fraco2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.barra { height: 4px; border-radius: 99px; background: var(--painel3); overflow: hidden; margin-top: 4px; }
+.barra > i { display: block; height: 100%; background: var(--verde); border-radius: inherit; transition: width .3s; }
+.kpi.conexao .val { display: flex; align-items: center; gap: 6px; font: 600 15px var(--mono); }
+.kpi.conexao .val span { overflow: hidden; text-overflow: ellipsis; }
+
+.aviso-box { display: flex; gap: 10px; align-items: flex-start; background: var(--amarelo-bg); border: 1px solid #5c4710; color: #f3d17a; padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 13px; }
+.aviso-box svg.i { margin-top: 1px; }
+
+/* ---------- Grade principal ---------- */
+.grade { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 14px; align-items: start; }
+.lateral { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+/* Console */
+.console-wrap { position: relative; }
+#console { font: 12.5px/1.55 var(--mono); height: calc(100vh - 430px); min-height: 340px; overflow-y: auto; padding: 8px 14px; white-space: pre-wrap; word-break: break-word; background: #090b0a; }
+#console > div { padding: 0 4px; border-radius: 4px; }
+#console > div:hover { background: #ffffff08; }
+#console .l-erro { color: #ff7b7b; } #console .l-aviso { color: var(--amarelo); }
+#console .l-painel { color: var(--azul); } #console .l-ok { color: var(--verde); }
+#console .h { color: #4f5b53; margin-right: 4px; }
+#console .filtrada { display: none; }
+#b-novas { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); border-radius: 99px; box-shadow: 0 6px 20px #000a; }
+.busca { width: 210px; }
+.busca input { width: 100%; padding-top: 5px; padding-bottom: 5px; font-size: 13px; }
+#busca-cont { font-size: 12px; color: var(--fraco); min-width: 0; }
+.entrada { position: relative; display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--borda); }
+.entrada .prompt { position: absolute; left: 24px; top: 50%; transform: translateY(-50%); color: var(--verde); font: 600 14px var(--mono); pointer-events: none; }
+.entrada input { flex: 1; font-family: var(--mono); padding-left: 28px; height: 38px; }
+.entrada .btn { height: 38px; }
+#sugestoes { position: absolute; left: 12px; right: 12px; bottom: calc(100% - 4px); background: var(--painel2); border: 1px solid var(--borda2); border-radius: 10px; box-shadow: 0 -8px 28px #000a; max-height: 300px; overflow-y: auto; z-index: 5; padding: 4px 0; }
+.sug { padding: 6px 12px; cursor: pointer; display: flex; gap: 12px; align-items: baseline; }
+.sug.sel, .sug:hover { background: var(--painel3); }
+.sug code { font: 13px var(--mono); color: var(--verde); white-space: nowrap; }
+.sug span { color: var(--fraco); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sug-dica { padding: 4px 12px 5px; color: var(--fraco); font-size: 11.5px; border-top: 1px solid var(--borda); margin-top: 4px; }
+.rapidas { border-top: 1px solid var(--borda); }
+.rapidas summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 7px; padding: 8px 14px; color: var(--fraco); font-size: 12.5px; user-select: none; }
+.rapidas summary::-webkit-details-marker { display: none; }
+.rapidas summary:hover { color: var(--texto); }
+.rapidas summary .seta { transition: transform .15s; }
+.rapidas[open] summary .seta { transform: rotate(180deg); }
+.grupos-rap { display: flex; flex-wrap: wrap; gap: 10px 18px; padding: 0 14px 12px; }
+.grupo-rap { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.grupo-rap b { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--fraco2); font-weight: 600; margin-right: 2px; }
+.chip { font-size: 12px; padding: 3px 10px; border-radius: 99px; background: var(--painel2); border: 1px solid var(--borda2); cursor: pointer; color: var(--fraco); }
+.chip:hover { color: var(--texto); border-color: #4a564e; }
+.chip.arg::after { content: " …"; color: var(--fraco2); }
+
+/* Jogadores */
+.lista { overflow-y: auto; }
+.jog { padding: 10px 14px; border-bottom: 1px solid var(--borda); display: flex; flex-direction: column; gap: 8px; }
+.jog:last-child { border-bottom: 0; }
+.jog .linha { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.avatar { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; font-weight: 700; font-size: 15px; flex: none; color: #0b0e0c; }
+.jog .nome { flex: 1; min-width: 0; }
+.jog .nome div { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jog .nome small { color: var(--fraco); font-size: 12px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ping { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--fraco); font-variant-numeric: tabular-nums; flex: none; }
+.ping::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--verde); }
+.ping.medio::before { background: var(--amarelo); } .ping.ruim::before { background: var(--vermelho); }
+.jog .acoes { display: flex; gap: 5px; flex-wrap: wrap; }
+.jog .acoes .mod { margin-left: auto; display: flex; gap: 5px; }
+.tag { font-size: 11px; padding: 1px 8px; border-radius: 99px; background: var(--painel2); border: 1px solid var(--borda2); color: var(--fraco); font-weight: 500; white-space: nowrap; }
+.tag.admin { color: var(--amarelo); border-color: #5c4710; background: var(--amarelo-bg); }
+
+/* Spawn */
+.spawn { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+.coord { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--bg); border: 1px solid var(--borda); border-radius: 8px; font: 13px var(--mono); }
+.coord svg.i { color: var(--verde); }
+.coord.vazia { font-family: inherit; color: var(--fraco); }
+.coord.vazia svg.i { color: var(--fraco2); }
+.ajuda { color: var(--fraco); font-size: 12.5px; }
+.ajuda summary { cursor: pointer; color: var(--fraco); display: inline-flex; align-items: center; gap: 6px; }
+.ajuda summary:hover { color: var(--texto); }
+.ajuda p { margin: 8px 0 0; line-height: 1.5; }
+
+/* Atualização */
+.atual-corpo { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.atual-corpo .barra { height: 6px; margin: 0; }
+.atual-corpo .barra > i { background: var(--amarelo); }
+pre.atual { margin: 0; font: 11.5px var(--mono); color: var(--fraco); white-space: pre-wrap; max-height: 160px; overflow: auto; }
+
+/* Eventos */
+#eventos { max-height: 320px; font-size: 13px; padding: 6px 0; }
+.ev { padding: 5px 14px; display: flex; gap: 9px; align-items: flex-start; }
+.ev svg.i { width: 14px; height: 14px; margin-top: 2px; color: var(--fraco2); }
+.ev time { color: var(--fraco2); font: 11.5px var(--mono); padding-top: 2px; flex: none; }
+.ev span { min-width: 0; overflow-wrap: anywhere; }
+.ev.erro svg.i, .ev.erro span { color: #ff8a8a; } .ev.aviso svg.i, .ev.aviso span { color: #f3c95a; } .ev.ok svg.i { color: var(--verde); }
+
+/* ---------- Backups ---------- */
+.abas-mapa { display: flex; gap: 6px; flex-wrap: wrap; }
+.aba-mapa { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--borda2); background: var(--painel2); cursor: pointer; color: var(--fraco); }
+.aba-mapa:hover { color: var(--texto); }
+.aba-mapa[aria-selected="true"] { background: var(--verde-bg); border-color: var(--verde-esc); color: var(--texto); }
+.aba-mapa .n { font-size: 11px; background: var(--painel3); border-radius: 99px; padding: 0 7px; color: var(--fraco); }
+.resumo { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.tabela { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--borda); white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: #ffffff05; }
+th { color: var(--fraco); font-weight: 500; font-size: 12px; background: var(--painel2); }
+th:first-child { border-top-left-radius: var(--raio); } th:last-child { border-top-right-radius: var(--raio); }
+td.num { font-variant-numeric: tabular-nums; }
+td small { color: var(--fraco2); display: block; font-size: 11.5px; }
+.t-manual { color: var(--azul); background: var(--azul-bg); border-color: #1f4a72; }
+.t-periodico { color: var(--verde); background: var(--verde-bg); border-color: #3a5c10; }
+.t-ao-desligar { color: var(--amarelo); background: var(--amarelo-bg); border-color: #5c4710; }
+.t-antes-de-restaurar { color: var(--roxo); background: var(--roxo-bg); border-color: #4c3f7a; }
+
+/* ---------- Configuração ---------- */
+.cf-topo { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; color: var(--fraco); font-size: 13px; flex-wrap: wrap; }
+.cf-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.cf-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.cf-col:empty { display: none; }
+.cf-grade .largo { grid-column: 1 / -1; }
+.campos { padding: 6px 16px 14px; display: flex; flex-direction: column; }
+.cmp { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-bottom: 1px solid var(--borda); }
+.cmp:last-child { border-bottom: 0; }
+.cmp > label, .cmp .rotulo { font-weight: 550; }
+.cmp .desc { color: var(--fraco); font-size: 12px; font-weight: normal; display: block; margin-top: 1px; }
+.cmp.linha { flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+.cmp input[type=text], .cmp input[type=password] { width: 100%; }
+.cmp input[type=number] { width: 150px; }
+.cmp .erro-msg { color: #ff8a8a; font-size: 12px; }
+.senha { display: flex; gap: 6px; }
+.senha input { flex: 1; }
+.linha-mapa { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto; gap: 8px; margin-bottom: 8px; }
+.linha-mapa .btn { height: 36px; }
+#barra-cf { position: fixed; left: 50%; bottom: 18px; transform: translate(-50%, 140%); transition: transform .2s; z-index: 30; display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 18px; background: var(--painel2); border: 1px solid var(--borda2); border-radius: 12px; box-shadow: 0 10px 40px #000c; max-width: calc(100vw - 32px); }
+#barra-cf.mostrar { transform: translate(-50%, 0); }
+#barra-cf span { display: flex; align-items: center; gap: 8px; color: #f3d17a; white-space: nowrap; }
+
+/* ---------- Diálogo / toast / rodapé ---------- */
+dialog { background: var(--painel); color: var(--texto); border: 1px solid var(--borda2); border-radius: 14px; padding: 0; width: min(440px, calc(100vw - 32px)); box-shadow: 0 20px 60px #000c; }
+dialog::backdrop { background: #0009; backdrop-filter: blur(3px); }
+.dlg-corpo { padding: 20px 20px 6px; display: flex; gap: 14px; }
+.dlg-ic { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; flex: none; background: var(--verde-bg); color: var(--verde); }
+.dlg-ic.perigo { background: var(--vermelho-bg); color: var(--vermelho); }
+.dlg-ic svg.i { width: 20px; height: 20px; }
+.dlg-corpo h3 { margin: 2px 0 6px; font-size: 16px; }
+.dlg-corpo p { margin: 0; color: var(--fraco); white-space: pre-line; }
+.dlg-campos { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+.dlg-campos label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-weight: 550; }
+.dlg-campos input, .dlg-campos select { width: 100%; }
+.dlg-botoes { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 20px 18px; }
+#toasts { position: fixed; bottom: 18px; right: 18px; display: flex; flex-direction: column; gap: 8px; z-index: 50; pointer-events: none; max-width: min(420px, calc(100vw - 36px)); }
+.toast { display: flex; align-items: flex-start; gap: 9px; background: var(--painel2); border: 1px solid var(--borda2); padding: 10px 14px; border-radius: 10px; box-shadow: 0 8px 28px #000a; animation: entra .18s ease-out; white-space: pre-line; }
+.toast svg.i { color: var(--verde); margin-top: 1px; }
+.toast.erro { border-color: #7a2e2e; } .toast.erro svg.i { color: var(--vermelho); }
+.toast.sai { opacity: 0; transition: opacity .25s; }
+@keyframes entra { from { opacity: 0; transform: translateY(8px); } }
+footer { text-align: center; padding: 0 16px 26px; color: var(--fraco2); font-size: 12px; }
+footer button { background: none; border: 0; color: var(--fraco); text-decoration: underline; cursor: pointer; padding: 0; }
+.fechado { min-height: 100vh; display: grid; place-items: center; text-align: center; color: var(--fraco); }
+
+@media (max-width: 1280px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1100px) {
+  .grade, .cf-grade { grid-template-columns: minmax(0, 1fr); }
+  #console { height: 55vh; }
+  .grupo.dir { margin-left: 0; }
+}
+@media (max-width: 720px) {
+  header { flex-wrap: wrap; padding: 10px 16px; gap: 10px; }
+  nav { order: 3; width: 100%; margin-left: 0; overflow-x: auto; }
+  nav button { flex: 1; justify-content: center; }
+  main { padding: 14px 16px 90px; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi.conexao { grid-column: 1 / -1; }
+  .controles { flex-direction: column; align-items: stretch; }
+  .grupo > div > * { flex: 1 1 auto; }
+  #mapa { min-width: 0; width: 100%; }
+  .busca { width: 100%; order: 5; }
+  .resumo { grid-template-columns: minmax(0, 1fr); }
+  .linha-mapa { grid-template-columns: minmax(0, 1fr) 110px auto; }
+  .cmp.linha { align-items: flex-start; }
+  #toasts { left: 16px; right: 16px; max-width: none; }
+  #barra-cf { flex-wrap: wrap; width: calc(100vw - 32px); }
+  #barra-cf span { width: 100%; }
+  #barra-cf .btn { flex: 1; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="marca" aria-hidden="true">U</div>
+  <div class="titulo"><h1 id="nome">Servidor Unturned</h1><small>Painel do servidor</small></div>
+  <span id="estado" class="pill e-parado" role="status">…</span>
+  <nav role="tablist" aria-label="Seções">
+    <button role="tab" data-aba="painel" aria-selected="true"></button>
+    <button role="tab" data-aba="backups" aria-selected="false"></button>
+    <button role="tab" data-aba="config" aria-selected="false"></button>
+  </nav>
+</header>
+
+<main>
+  <!-- PAINEL -->
+  <section id="aba-painel" role="tabpanel">
+    <div class="controles">
+      <div class="grupo">
+        <span>Servidor</span>
+        <div>
+          <select id="mapa" aria-label="Mapa"></select>
+          <button class="btn prim" id="b-iniciar"></button>
+          <button class="btn" id="b-reiniciar" title="Desliga salvando e abre de novo no mapa escolhido"></button>
+          <button class="btn perigo" id="b-parar"></button>
+          <button class="btn perigo oculto" id="b-forcar" title="Mata o processo. Perde o que não foi salvo."></button>
+        </div>
+      </div>
+      <div class="grupo dir">
+        <span>Manutenção</span>
+        <div>
+          <button class="btn" id="b-salvar" title="Salva o mundo agora"></button>
+          <button class="btn" id="b-backup" title="Salva e faz um backup .zip do mapa"></button>
+          <button class="btn" id="b-atualizar" title="Atualiza o servidor pelo SteamCMD (com ele desligado)"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div id="aviso-ponte" class="aviso-box oculto"></div>
+
+    <div class="grade">
+      <div class="card">
+        <div class="card-topo">
+          <h2 id="t-console"></h2>
+          <div class="dir">
+            <span id="busca-cont"></span>
+            <div class="campo-icone busca"><input type="search" id="busca" placeholder="Buscar no log…" aria-label="Buscar no log"></div>
+            <label class="switch" title="Esconde avisos repetitivos do mapa (colliders, shaders)"><input type="checkbox" id="filtro" checked> Ocultar ruído</label>
+            <label class="switch"><input type="checkbox" id="rolar" checked> Auto-rolagem</label>
+            <button class="btn peq fantasma" id="b-limpar" title="Limpa a tela (não apaga o log)"></button>
+          </div>
+        </div>
+        <div class="console-wrap">
+          <div id="console" role="log" aria-label="Console do servidor"></div>
+          <button class="btn peq oculto" id="b-novas"></button>
+        </div>
+        <form class="entrada" id="f-cmd" autocomplete="off">
+          <div id="sugestoes" class="oculto"></div>
+          <span class="prompt" aria-hidden="true">›</span>
+          <input type="text" id="cmd" placeholder="Digite um comando — say Olá, players, tp… (atalho: /)" spellcheck="false" aria-label="Comando">
+          <button class="btn prim" id="b-enviar"></button>
+        </form>
+        <details class="rapidas" id="rapidas">
+          <summary></summary>
+          <div class="grupos-rap" id="chips"></div>
+        </details>
+      </div>
+
+      <div class="lateral">
+        <div class="card">
+          <div class="card-topo"><h2 id="t-jog"></h2><span class="dir contador" id="cont-jog"></span></div>
+          <div class="lista" id="jogadores"></div>
+        </div>
+        <div class="card">
+          <div class="card-topo"><h2 id="t-spawn"></h2></div>
+          <div class="spawn">
+            <div id="spawn-txt"></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn peq" id="b-spawn-todos"></button>
+              <button class="btn peq perigo" id="b-spawn-del"></button>
+            </div>
+            <details class="ajuda">
+              <summary id="t-ajuda-spawn"></summary>
+              <p>Entre no jogo, vá até o lugar e clique em <b>Spawn aqui</b> no seu nome (ou, sendo admin, digite <code>/setspawn</code> no chat). Quem entra pela 1ª vez ou renasce depois de morrer vai para lá.</p>
+            </details>
+          </div>
+        </div>
+        <div class="card oculto" id="card-atual">
+          <div class="card-topo"><h2 id="t-atual"></h2><span class="dir contador" id="atual-pct"></span></div>
+          <div class="atual-corpo">
+            <div class="barra"><i id="atual-barra" style="width:0"></i></div>
+            <pre class="atual" id="atual"></pre>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-topo"><h2 id="t-eventos"></h2></div>
+          <div class="lista" id="eventos"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BACKUPS -->
+  <section id="aba-backups" class="oculto" role="tabpanel">
+    <div class="controles" style="align-items:center">
+      <div class="abas-mapa" id="bk-mapas" role="tablist" aria-label="Mapas"></div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn" id="bk-atualizar"></button>
+        <button class="btn prim" id="bk-agora"></button>
+      </div>
+    </div>
+    <div id="bk-aviso" class="aviso-box oculto"></div>
+    <div class="resumo" id="bk-resumo"></div>
+    <div class="card">
+      <div class="tabela">
+        <table>
+          <thead><tr><th>Quando</th><th>Tipo</th><th>Tamanho</th><th>Arquivo</th><th></th></tr></thead>
+          <tbody id="bk-lista"></tbody>
+        </table>
+      </div>
+      <div class="vazio oculto" id="bk-vazio"></div>
+    </div>
+  </section>
+
+  <!-- CONFIG -->
+  <section id="aba-config" class="oculto" role="tabpanel">
+    <div class="cf-topo" id="cf-topo"></div>
+    <div class="cf-grade" id="cf-form"></div>
+  </section>
+</main>
+
+<div id="barra-cf" role="region" aria-label="Alterações não salvas">
+  <span id="t-barra-cf"></span>
+  <button class="btn" id="cf-recarregar">Descartar</button>
+  <button class="btn prim" id="cf-salvar"></button>
+</div>
+
+<footer>Painel local · só abre neste PC · <button id="b-sair">fechar o painel</button> <span>(o servidor continua rodando, mas sem backups periódicos até abrir o painel de novo)</span></footer>
+
+<dialog id="dlg"><form method="dialog" id="dlg-form">
+  <div class="dlg-corpo">
+    <div class="dlg-ic" id="dlg-ic"></div>
+    <div style="flex:1;min-width:0"><h3 id="dlg-titulo"></h3><p id="dlg-texto"></p><div class="dlg-campos" id="dlg-campos"></div></div>
+  </div>
+  <div class="dlg-botoes"><button class="btn" value="" formnovalidate>Cancelar</button><button class="btn prim" id="dlg-ok" value="ok"></button></div>
+</form></dialog>
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let st = null;
+
+// ---------- Ícones (traço, 24x24) ----------
+const ICONES = {
+  play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+  rotate: '<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>',
+  stop: '<rect x="5" y="5" width="14" height="14" rx="2"/>',
+  power: '<path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/>',
+  save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>',
+  archive: '<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+  copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15"/><path d="M15 6v15"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  cpu: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/>',
+  terminal: '<path d="m4 17 6-6-6-6"/><path d="M12 19h8"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  down: '<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
+  trash: '<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+  arrow: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+  info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  ban: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+  kick: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  sliders: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+  dash: '<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',
+  eye: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+  eyeoff: '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.4 10.4 0 0 1 12 5c7 0 10 7 10 7a13.2 13.2 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3 7 10 7a9.7 9.7 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M22 12h-4M6 12H2M12 6V2M12 22v-4"/>',
+  chevron: '<path d="m6 9 6 6 6-6"/>',
+  zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+  db: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/>',
+  history: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  package: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+  server: '<rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/>',
+  user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  send: '<path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/>',
+};
+const ic = (n, cls = '') => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONES[n] || ''}</svg>`;
+function rotulo(el, icone, texto) {
+  const html = ic(icone) + `<span>${esc(texto)}</span>`;
+  if (el.dataset.html !== html) { el.innerHTML = html; el.dataset.html = html; }
+}
+function setHtml(el, html) { if (el.dataset.html !== html) { el.innerHTML = html; el.dataset.html = html; } }
+
+// Rótulos estáticos com ícone
+[['[data-aba=painel]', 'dash', 'Painel'], ['[data-aba=backups]', 'archive', 'Backups'], ['[data-aba=config]', 'sliders', 'Configuração'],
+ ['#b-iniciar', 'play', 'Iniciar'], ['#b-forcar', 'x', 'Forçar fechamento'], ['#b-salvar', 'save', 'Salvar mundo'], ['#b-backup', 'archive', 'Backup agora'],
+ ['#b-atualizar', 'download', 'Atualizar'], ['#t-console', 'terminal', 'Console'], ['#b-limpar', 'trash', 'Limpar'], ['#b-novas', 'down', 'Novas linhas'],
+ ['#b-enviar', 'send', 'Enviar'], ['#t-jog', 'users', 'Jogadores'], ['#t-spawn', 'pin', 'Spawn fixo'], ['#b-spawn-todos', 'arrow', 'Levar todos ao spawn'],
+ ['#b-spawn-del', 'trash', 'Remover'], ['#t-ajuda-spawn', 'info', 'Como definir o spawn?'], ['#t-atual', 'download', 'Atualização (SteamCMD)'],
+ ['#t-eventos', 'history', 'Eventos do painel'], ['#bk-atualizar', 'rotate', 'Recarregar'], ['#bk-agora', 'archive', 'Backup agora'],
+ ['#cf-salvar', 'save', 'Salvar configuração'], ['#t-barra-cf', 'alert', 'Alterações não salvas']].forEach(([s, i, t]) => rotulo($(s), i, t));
+$('.busca').insertAdjacentHTML('afterbegin', ic('search'));
+$('#rapidas summary').innerHTML = ic('zap') + '<span>Ações rápidas</span>' + ic('chevron', 'seta');
+$('#aviso-ponte').innerHTML = ic('alert') + '<div>Este servidor foi aberto fora do painel (pelo .bat antigo). O painel está vigiando e fazendo backups, mas não consegue mandar comandos. Para ter controle total, desligue o servidor pela janela dele e inicie por aqui.</div>';
+
+async function api(rota, corpo) {
+  const op = corpo === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Painel': '1' }, body: JSON.stringify(corpo) };
+  const r = await fetch('/api/' + rota, op);
+  const j = await r.json().catch(() => ({ erro: 'Resposta inválida do painel.' }));
+  if (!r.ok || j.erro) throw new Error(j.erro || r.statusText);
+  return j;
+}
+async function acao(rota, corpo = {}, msg) {
+  try { await api(rota, corpo); if (msg) toast(msg); atualizarStatus(); }
+  catch (e) { toast(e.message, true); }
+}
+function toast(msg, erro) {
+  const box = $('#toasts'), t = document.createElement('div');
+  t.className = 'toast' + (erro ? ' erro' : '');
+  t.innerHTML = ic(erro ? 'alert' : 'check') + `<span>${esc(msg)}</span>`;
+  box.appendChild(t);
+  while (box.childElementCount > 3) box.firstElementChild.remove();
+  setTimeout(() => { t.classList.add('sai'); setTimeout(() => t.remove(), 300); }, erro ? 6000 : 3000);
+}
+
+// ---------- Diálogo (substitui confirm/prompt) ----------
+// campos: [{ nome, rotulo, valor, opcoes: [[valor, texto]], placeholder }]; devolve null (cancelou) ou { nome: valor }
+function dialogo({ titulo, texto = '', ok = 'Confirmar', perigo = false, icone, campos = [] }) {
+  const d = $('#dlg');
+  $('#dlg-titulo').textContent = titulo;
+  $('#dlg-texto').textContent = texto;
+  $('#dlg-ic').className = 'dlg-ic' + (perigo ? ' perigo' : '');
+  $('#dlg-ic').innerHTML = ic(icone || (perigo ? 'alert' : 'info'));
+  $('#dlg-ok').textContent = ok;
+  $('#dlg-ok').className = 'btn ' + (perigo ? 'perigo-cheio' : 'prim');
+  $('#dlg-campos').innerHTML = campos.map(c => `<label>${esc(c.rotulo)}${c.opcoes
+    ? `<select name="${c.nome}">${c.opcoes.map(([v, t]) => `<option value="${esc(v)}" ${String(v) === String(c.valor) ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>`
+    : `<input type="text" name="${c.nome}" value="${esc(c.valor ?? '')}" placeholder="${esc(c.placeholder ?? '')}">`}</label>`).join('');
+  d.returnValue = '';
+  d.showModal();
+  (d.querySelector('#dlg-campos input, #dlg-campos select') || $('#dlg-ok')).focus();
+  return new Promise(res => d.addEventListener('close', () => {
+    if (d.returnValue !== 'ok') return res(null);
+    const r = {}; d.querySelectorAll('#dlg-campos [name]').forEach(el => r[el.name] = el.value.trim());
+    res(r);
+  }, { once: true }));
+}
+
+// ---------- Abas (com # na URL) ----------
+const abas = ['painel', 'backups', 'config'];
+function irPara(aba) {
+  if (!abas.includes(aba)) aba = 'painel';
+  document.querySelectorAll('nav button').forEach(x => x.setAttribute('aria-selected', x.dataset.aba === aba));
+  for (const a of abas) $('#aba-' + a).classList.toggle('oculto', a !== aba);
+  if (aba === 'backups') carregarBackups();
+  if (aba === 'config' && !cfgSujo) carregarConfig();
+  $('#barra-cf').classList.toggle('mostrar', aba === 'config' && cfgSujo);
+  if (location.hash.slice(1) !== aba) history.replaceState(null, '', aba === 'painel' ? location.pathname : '#' + aba);
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => irPara(b.dataset.aba));
+window.addEventListener('hashchange', () => irPara(location.hash.slice(1)));
+
+// ---------- Status ----------
+const nomesEstado = { parado: 'Desligado', atualizando: 'Atualizando', iniciando: 'Iniciando', rodando: 'Online', parando: 'Desligando', 'aguardando-reinicio': 'Reabrindo' };
+const coresFavicon = { rodando: '84cc16', parado: '67736b' };
+function duracao(ms) {
+  const m = Math.floor(ms / 60000), h = Math.floor(m / 60);
+  return h ? `${h}h ${String(m % 60).padStart(2, '0')}min` : `${m} min`;
+}
+function hora(iso) { return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+function relativo(iso) {
+  const s = Math.round((Date.now() - new Date(iso)) / 1000);
+  if (s < 45) return 'agora há pouco';
+  if (s < 3600) return `há ${Math.round(s / 60)} min`;
+  if (s < 86400) return `há ${Math.round(s / 3600)} h`;
+  const d = Math.round(s / 86400);
+  return d === 1 ? 'ontem' : `há ${d} dias`;
+}
+function kpi(icone, rot, val, sub = '', extra = '', cls = '') {
+  const vazio = val === null || val === undefined || val === '';
+  return `<div class="kpi ${cls}"><div class="rot">${ic(icone)}${esc(rot)}</div><div class="val${vazio ? ' apagado' : ''}">${vazio ? '—' : val}</div>${sub ? `<div class="sub">${sub}</div>` : ''}${extra}</div>`;
+}
+let faviconEstado = null;
+function atualizarFavicon(e) {
+  if (faviconEstado === e) return; faviconEstado = e;
+  const cor = coresFavicon[e] || 'e3a008';
+  $('#favicon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23${cor}'/><text x='16' y='23' font-size='19' text-anchor='middle' font-family='Arial' font-weight='bold' fill='%2310160a'>U</text></svg>`;
+}
+
+async function atualizarStatus() {
+  try { st = await api('status'); } catch { $('#estado').textContent = 'Painel fora do ar'; $('#estado').className = 'pill e-parado'; return; }
+  const e = st.estado, aberto = !!st.pid;
+  document.title = `${nomesEstado[e]} · ${st.servidor.nome}`;
+  atualizarFavicon(e);
+  $('#nome').textContent = st.servidor.nome;
+  const pe = $('#estado'); pe.className = 'pill e-' + e;
+  pe.textContent = nomesEstado[e] + (e === 'aguardando-reinicio' && st.reinicioEm ? ` em ${Math.max(0, Math.round((new Date(st.reinicioEm) - Date.now()) / 1000))} s` : '');
+
+  // KPIs
+  const lot = aberto ? Math.min(100, Math.round(st.jogadores.length / Math.max(1, st.max) * 100)) : 0;
+  const conexao = st.serverCode
+    ? `<span>${esc(st.serverCode)}</span><button class="btn peq icone fantasma" id="sc" title="Copiar o código">${ic('copy')}</button>`
+    : aberto ? `<span>127.0.0.1:${esc(st.servidor.porta)}</span>` : null;
+  setHtml($('#kpis'), [
+    kpi('map', 'Mapa', st.mapa && e !== 'parado' ? esc(st.mapa) : null, st.mapa && e !== 'parado' ? '' : `Último: ${esc(st.ultimoMapa || '—')}`),
+    kpi('users', 'Jogadores', aberto ? `${st.jogadores.length} <span style="color:var(--fraco2);font-weight:500">/ ${st.max}</span>` : null, '', `<div class="barra"><i style="width:${lot}%"></i></div>`),
+    kpi('clock', 'Tempo ligado', st.inicio ? duracao(Date.now() - new Date(st.inicio)) : null, st.inicio ? `desde ${new Date(st.inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : ''),
+    kpi('cpu', 'Memória RAM', st.memoriaMB ? `${(st.memoriaMB / 1024).toFixed(1)} GB` : null),
+    kpi('save', 'Último save', st.ultimoAutosave && aberto ? relativo(st.ultimoAutosave) : null, st.ultimoAutosave && aberto ? `às ${hora(st.ultimoAutosave)} · a cada ${st.servidor.autosave} min` : `autosave a cada ${st.servidor.autosave} min`),
+    kpi('globe', st.serverCode ? 'Server Code' : 'Conexão', conexao,
+      st.serverCode ? 'Amigos: Play → Connect e colam o código' : aberto ? 'Gerando o Server Code…' : 'O código aparece com o servidor ligado', '', 'conexao'),
+  ].join(''));
+  const sc = $('#sc'); if (sc) sc.onclick = () => navigator.clipboard.writeText(st.serverCode).then(() => toast('Código copiado — os amigos usam em Play → Connect.'));
+
+  // Mapas
+  const sel = $('#mapa'), atual = sel.value || st.ultimoMapa;
+  const opts = st.mapas.map(x => `<option value="${esc(x.nome)}">${esc(x.nome)}${x.workshop ? ' (Workshop)' : ''}${x.temSave ? ' — com save' : ''}</option>`).join('');
+  if (sel.dataset.opts !== opts) { sel.innerHTML = opts; sel.dataset.opts = opts; sel.value = atual; }
+
+  const ocupado = ['atualizando', 'parando'].includes(e);
+  $('#b-iniciar').disabled = aberto || ocupado || e === 'iniciando';
+  $('#b-parar').disabled = !aberto && e !== 'aguardando-reinicio';
+  if (e === 'aguardando-reinicio') rotulo($('#b-parar'), 'x', 'Cancelar reabertura'); else rotulo($('#b-parar'), 'power', 'Desligar');
+  $('#b-reiniciar').disabled = !aberto || ocupado || !st.ponte;
+  $('#b-salvar').disabled = !aberto || !st.ponte;
+  $('#b-atualizar').disabled = e !== 'parado';
+  $('#b-forcar').classList.toggle('oculto', !(aberto && (e === 'parando' ? st.parandoHa > 30 : !st.ponte)));
+  $('#aviso-ponte').classList.toggle('oculto', !(aberto && !st.ponte && e === 'rodando'));
+  if (aberto && sel.value && sel.value !== st.mapa) rotulo($('#b-reiniciar'), 'map', 'Trocar de mapa'); else rotulo($('#b-reiniciar'), 'rotate', 'Reiniciar');
+
+  // Jogadores
+  $('#cont-jog').textContent = aberto ? `${st.jogadores.length} / ${st.max}` : '';
+  setHtml($('#jogadores'), !aberto ? `<div class="vazio">${ic('power')}Servidor desligado.<br>Escolha o mapa e clique em Iniciar.</div>`
+    : !st.jogadores.length ? `<div class="vazio">${ic('users')}Ninguém online ainda.</div>`
+    : st.jogadores.map(htmlJogador).join(''));
+  setHtml($('#spawn-txt'), !aberto ? `<div class="coord vazia">${ic('pin')}Servidor desligado.</div>`
+    : st.spawn ? `<div class="coord" title="Coordenadas x y z">${ic('pin')}${esc(st.spawn)}</div>` : `<div class="coord vazia">${ic('pin')}Nenhum: spawns normais do mapa.</div>`);
+  $('#b-spawn-todos').disabled = $('#b-spawn-del').disabled = !aberto || !st.spawn;
+
+  // Atualização
+  $('#card-atual').classList.toggle('oculto', e !== 'atualizando');
+  if (e === 'atualizando') {
+    $('#atual').textContent = st.atualizacao || 'Iniciando o SteamCMD…';
+    const p = [...(st.atualizacao || '').matchAll(/progress:\s*([\d.]+)/g)].pop();
+    $('#atual-barra').style.width = (p ? Math.min(100, +p[1]) : 3) + '%';
+    $('#atual-pct').textContent = p ? `${Math.round(+p[1])}%` : '';
+  }
+
+  // Eventos
+  const icEv = { ok: 'check', aviso: 'alert', erro: 'alert', info: 'info' };
+  setHtml($('#eventos'), st.eventos.slice().reverse().map(x => `<div class="ev ${x.tipo}">${ic(icEv[x.tipo] || 'info')}<time>${hora(x.hora)}</time><span>${esc(x.texto)}</span></div>`).join('')
+    || `<div class="vazio">${ic('history')}Nada ainda.</div>`);
+
+  if (!$('#aba-backups').classList.contains('oculto')) estadoBackups();
+
+  if (st.sessao !== sessaoLog) { sessaoLog = st.sessao; posLog = -1; comandosSessao = null; }
+  if (comandosSessao !== st.sessao && st.estado === 'rodando') carregarComandos(st.sessao);
+}
+
+function corDe(s) { let h = 0; for (const c of s) h = (h * 31 + c.codePointAt(0)) % 360; return `hsl(${h} 55% 62%)`; }
+function htmlJogador(j) {
+  const ping = j.ping < 80 ? '' : j.ping < 150 ? 'medio' : 'ruim';
+  const a = `data-id="${esc(j.id)}" data-n="${esc(j.personagem)}"`;
+  return `<div class="jog"><div class="linha">
+      <div class="avatar" style="background:${corDe(j.personagem)}">${esc([...j.personagem][0] || '?')}</div>
+      <div class="nome"><div>${esc(j.personagem)} ${j.admin ? '<span class="tag admin">admin</span>' : ''}</div><small>${esc(j.steam)}</small></div>
+      <span class="ping ${ping}" title="Ping">${esc(j.ping)} ms</span></div>
+    <div class="acoes">
+      <button class="btn peq" data-j="player" ${a} title="Mostra dados e coordenadas no console">${ic('file')}Dados</button>
+      <button class="btn peq" data-j="setspawn" ${a} title="Define o spawn fixo onde este jogador está agora">${ic('target')}Spawn aqui</button>
+      <button class="btn peq" data-j="irspawn" ${a} title="Teleporta este jogador para o spawn fixo">${ic('arrow')}Ao spawn</button>
+      <span class="mod"><button class="btn peq icone" data-j="kick" ${a} title="Expulsar (kick)" aria-label="Expulsar ${esc(j.personagem)}">${ic('kick')}</button>
+      <button class="btn peq icone perigo" data-j="ban" ${a} title="Banir" aria-label="Banir ${esc(j.personagem)}">${ic('ban')}</button></span>
+    </div></div>`;
+}
+
+$('#mapa').onchange = () => atualizarStatus();
+$('#b-spawn-todos').onclick = async () => {
+  if (await dialogo({ titulo: 'Levar todos ao spawn?', texto: 'Todos os jogadores online serão teleportados para o spawn fixo.', ok: 'Teleportar todos', icone: 'arrow' })) enviar('irspawn todos');
+};
+$('#b-spawn-del').onclick = async () => {
+  if (await dialogo({ titulo: 'Remover o spawn fixo?', texto: 'Voltam os spawns normais do mapa.', ok: 'Remover', perigo: true, icone: 'trash' })) enviar('delspawn');
+};
+$('#b-iniciar').onclick = () => acao('iniciar', { mapa: $('#mapa').value }, 'Iniciando…');
+$('#b-parar').onclick = async () => {
+  if (st?.estado === 'aguardando-reinicio') return acao('parar');
+  const n = st?.jogadores.length || 0;
+  if (n && !await dialogo({ titulo: 'Desligar o servidor?', texto: `Há ${n} jogador(es) online. Eles serão desconectados.\nO mundo é salvo e um backup é feito antes de fechar.`, ok: 'Desligar', perigo: true, icone: 'power' })) return;
+  acao('parar', {}, 'Desligando e salvando…');
+};
+$('#b-reiniciar').onclick = async () => {
+  const m = $('#mapa').value, troca = m !== st.mapa;
+  const ok = await dialogo(troca
+    ? { titulo: `Trocar para ${m}?`, texto: `O servidor salva ${st.mapa}, desliga e abre em ${m}. O save de cada mapa é mantido.`, ok: 'Trocar de mapa', icone: 'map' }
+    : { titulo: 'Reiniciar o servidor?', texto: 'Ele salva o mundo antes de desligar e abre de novo no mesmo mapa.', ok: 'Reiniciar', icone: 'rotate' });
+  if (ok) acao('reiniciar', { mapa: m });
+};
+$('#b-forcar').onclick = async () => {
+  if (await dialogo({ titulo: 'Forçar o fechamento?', texto: 'Mata o processo do servidor. O que não foi salvo desde o último save se perde.', ok: 'Forçar fechamento', perigo: true })) acao('forcar');
+};
+$('#b-salvar').onclick = () => acao('salvar', {}, 'Salvando o mundo…');
+$('#b-backup').onclick = () => acao('backup', { mapa: $('#mapa').value }, 'Backup em andamento…');
+$('#b-atualizar').onclick = () => acao('atualizar', {}, 'Atualizando…');
+$('#b-sair').onclick = async () => {
+  if (!await dialogo({ titulo: 'Fechar o painel?', texto: 'O servidor continua aberto, mas sem backups periódicos e sem reabrir se cair.', ok: 'Fechar o painel', perigo: true, icone: 'power' })) return;
+  await api('sair', {}).catch(() => {});
+  document.body.innerHTML = `<div class="fechado"><div>${ic('power')}<p>Painel fechado. Abra de novo pelo <b>Painel do Servidor.vbs</b>.</p></div></div>`;
+};
+$('#jogadores').onclick = async ev => {
+  const b = ev.target.closest('button[data-j]'); if (!b) return;
+  const { id, n } = b.dataset;
+  if (b.dataset.j === 'player') {
+    enviar(`player ${id}`);
+  } else if (b.dataset.j === 'setspawn') {
+    if (await dialogo({ titulo: 'Definir o spawn fixo aqui?', texto: `O spawn passa a ser onde ${n} está agora.`, ok: 'Definir spawn', icone: 'target' })) enviar(`setspawn ${id}`);
+  } else if (b.dataset.j === 'irspawn') {
+    enviar(`irspawn ${id}`);
+  } else if (b.dataset.j === 'kick') {
+    const r = await dialogo({ titulo: `Expulsar ${n}?`, texto: 'O jogador é desconectado e pode voltar.', ok: 'Expulsar', perigo: true, icone: 'kick',
+      campos: [{ nome: 'motivo', rotulo: 'Motivo (opcional)', placeholder: 'Ex.: AFK' }] });
+    if (r) enviar(`kick ${id}${r.motivo ? '/' + r.motivo : ''}`);
+  } else {
+    const r = await dialogo({ titulo: `Banir ${n}?`, texto: 'O jogador é desconectado e não consegue voltar até o fim do ban.', ok: 'Banir', perigo: true, icone: 'ban',
+      campos: [{ nome: 'motivo', rotulo: 'Motivo', valor: 'Banido' },
+               { nome: 'seg', rotulo: 'Duração', valor: 86400, opcoes: [[3600, '1 hora'], [86400, '24 horas'], [604800, '7 dias'], [2592000, '30 dias'], [315360000, 'Permanente']] }] });
+    if (r) enviar(`ban ${id}/${r.motivo || 'Banido'}/${r.seg}`);
+  }
+};
+
+// ---------- Console ----------
+let posLog = -1, sessaoLog = null, carregandoLog = false;
+const cons = $('#console');
+const ruido = /BoxCollider does not support|effective box size has been forced|If you absolutely need to use negative scaling|Shader .* is not supported|^\s*$/;
+function classe(l) {
+  if (/\[Painel\]/.test(l)) return 'l-painel';
+  if (/\[Autosave\]|Server Code:|Steam servers ready|Loading level: 100/.test(l)) return 'l-ok';
+  if (/(error|exception|failed|falha)/i.test(l)) return 'l-erro';
+  if (/(warning|warn\b|aviso)/i.test(l)) return 'l-aviso';
+  return '';
+}
+function linhaHtml(l) {
+  const m = /^\[(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)\] ?(.*)$/.exec(l);
+  if (!m) return `<div class="${classe(l)}">${esc(l)}</div>`;
+  const d = new Date(Date.UTC(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +m[6]));   // o log do Unturned usa UTC
+  return `<div class="${classe(m[7])}"><span class="h">${d.toLocaleTimeString('pt-BR')}</span>${esc(m[7])}</div>`;
+}
+function noFimConsole() { return cons.scrollHeight - cons.scrollTop - cons.clientHeight < 40; }
+function aoFim() { cons.scrollTop = cons.scrollHeight; $('#b-novas').classList.add('oculto'); }
+async function atualizarLog() {
+  if (carregandoLog || $('#aba-painel').classList.contains('oculto')) return;
+  carregandoLog = true;
+  try {
+    const r = await api('log?pos=' + posLog);
+    if (r.reset) cons.innerHTML = '';
+    posLog = r.pos;
+    if (r.texto) {
+      const filtrar = $('#filtro').checked;
+      const html = r.texto.split(/\r?\n/).filter(l => !(filtrar && ruido.test(l)) && l !== '').map(linhaHtml).join('');
+      const noFim = noFimConsole();
+      cons.insertAdjacentHTML('beforeend', html);
+      while (cons.childElementCount > 4000) cons.firstElementChild.remove();
+      if (busca) filtrarConsole();
+      if ($('#rolar').checked && (noFim || r.reset)) aoFim();
+      else if (html && !r.reset) $('#b-novas').classList.remove('oculto');
+    }
+  } catch {} finally { carregandoLog = false; }
+}
+cons.addEventListener('scroll', () => { if (noFimConsole()) $('#b-novas').classList.add('oculto'); });
+$('#b-novas').onclick = aoFim;
+$('#filtro').onchange = () => { posLog = -1; atualizarLog(); };
+$('#b-limpar').onclick = () => cons.innerHTML = '';
+
+// Busca no log
+let busca = '';
+function filtrarConsole() {
+  let n = 0;
+  for (const d of cons.children) {
+    const ok = !busca || d.textContent.toLowerCase().includes(busca);
+    d.classList.toggle('filtrada', !ok); if (ok) n++;
+  }
+  $('#busca-cont').textContent = busca ? `${n} linha${n === 1 ? '' : 's'}` : '';
+}
+let tBusca;
+$('#busca').oninput = () => { clearTimeout(tBusca); tBusca = setTimeout(() => { busca = $('#busca').value.trim().toLowerCase(); filtrarConsole(); if (!busca) aoFim(); }, 150); };
+
+const historico = JSON.parse((() => { try { return localStorage.getItem('hist') } catch { return null } })() || '[]');
+let iHist = -1;
+async function enviar(texto) {
+  try {
+    const r = await api('comando', { texto });
+    if (r.mensagem) {
+      cons.insertAdjacentHTML('beforeend', `<div class="l-painel"><span class="h">${new Date().toLocaleTimeString('pt-BR')}</span>[Painel] ${esc(texto)}${r.mensagem.includes('\n') ? '\n' : ' → '}${esc(r.mensagem)}</div>`);
+      aoFim();
+      toast(r.mensagem.includes('\n') ? 'Resposta no console.' : r.mensagem);
+    } else setTimeout(atualizarLog, 700);
+    return true;
+  }
+  catch (e) { toast(e.message, true); return false; }
+}
+$('#f-cmd').onsubmit = async ev => {
+  ev.preventDefault();
+  const i = $('#cmd'), t = i.value.trim(); if (!t) return;
+  if (await enviar(t)) {
+    i.value = ''; iHist = -1; sugs = []; mostrarSugestoes();
+    if (historico[0] !== t) historico.unshift(t);
+    historico.length = Math.min(historico.length, 50);
+    try { localStorage.setItem('hist', JSON.stringify(historico)); } catch {}
+  }
+};
+// Atalho "/" para o campo de comando
+document.addEventListener('keydown', ev => {
+  if (ev.key !== '/' || ev.ctrlKey || ev.metaKey || $('#aba-painel').classList.contains('oculto')) return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName) || $('#dlg').open) return;
+  ev.preventDefault(); $('#cmd').focus();
+});
+
+// ---------- Sugestões ao digitar ----------
+let comandos = [], comandosSessao = null, sugs = [], iSug = -1;
+async function carregarComandos(sessao) {
+  try {
+    const r = await api('comandos');
+    const srv = (Array.isArray(r.servidor) ? r.servidor : []).map(x => ({ c: x.c.toLowerCase(), info: x.info, help: x.help }));
+    comandos = [...(r.painel || []), ...srv.sort((a, b) => a.c.localeCompare(b.c))];
+    if (srv.length) comandosSessao = sessao;   // sem a lista do servidor ainda: tenta de novo no próximo status
+  } catch {}
+}
+// Comandos cujo argumento é um jogador: sugere quem está online
+const comJogador = /^(kick|ban|setspawn|irspawn|player|jogador|teleport|teleportar|tp|admin|unadmin|slay|give|experience|spy|permit|vehicle|animal)$/;
+function calcularSugestoes() {
+  const v = $('#cmd').value, m = /^(\/?)(\S*)(\s+(.*))?$/.exec(v);
+  sugs = [];
+  if (!m || !v) return mostrarSugestoes();
+  const nome = m[2].toLowerCase();
+  if (m[3] === undefined) {
+    const busca = (m[1] + nome).replace(/^\//, '');
+    const todos = comandos.map(x => ({ ...x, chave: x.c.replace(/^\//, '') }));
+    sugs = [...todos.filter(x => x.chave.startsWith(busca)),
+            ...todos.filter(x => !x.chave.startsWith(busca) && busca.length > 1 && (x.chave.includes(busca) || (x.info || '').toLowerCase().includes(busca)))]
+      .slice(0, 12).map(x => ({ valor: x.c + (/[<\[]/.test(x.help || '') ? ' ' : ''), rotulo: x.help || x.c, info: x.info }));
+    if (sugs.length === 1 && sugs[0].valor.trim() === v.trim()) sugs = [];
+  } else if (comJogador.test(nome) && st?.jogadores?.length) {
+    let arg = (m[4] || '').toLowerCase(), base = `${m[1]}${m[2]} `;
+    if (nome === 'tp' || nome === 'teleportar') {
+      // Se o 1o argumento ja e um jogador (ou "todos"), sugere o destino
+      const primeiro = ['todos', ...st.jogadores.map(j => j.personagem.toLowerCase())].find(n => arg.startsWith(n + ' '));
+      if (primeiro !== undefined) {
+        base += m[4].slice(0, primeiro.length + 1); arg = arg.slice(primeiro.length + 1);
+        sugs = st.jogadores.filter(j => j.personagem.toLowerCase() !== primeiro && (!arg || j.personagem.toLowerCase().includes(arg)))
+          .map(j => ({ valor: base + j.personagem, rotulo: j.personagem, info: 'destino: ' + j.steam }));
+        if ('spawn'.startsWith(arg) && st.spawn) sugs.push({ valor: base + 'spawn', rotulo: 'spawn', info: 'o spawn fixo' });
+        if (sugs.length === 1 && sugs[0].valor === v.trim()) sugs = [];
+        iSug = sugs.length ? 0 : -1;
+        return mostrarSugestoes();
+      }
+      if ('todos'.startsWith(arg)) sugs.push({ valor: base + 'todos ', rotulo: 'todos', info: 'todos os jogadores online' });
+    }
+    if (arg.includes('/')) return mostrarSugestoes();
+    sugs = st.jogadores.filter(j => !arg || j.personagem.toLowerCase().includes(arg) || j.steam.toLowerCase().includes(arg) || j.id.startsWith(arg))
+      .map(j => ({ valor: base + j.personagem + (nome === 'tp' || nome === 'teleportar' ? ' ' : ''), rotulo: j.personagem, info: `${j.steam} · ${j.id}` }))
+      .concat(sugs);
+    if (nome === 'irspawn' && 'todos'.startsWith(arg)) sugs.unshift({ valor: `${m[2]} todos`, rotulo: 'todos', info: 'todos os jogadores online' });
+    if (sugs.length === 1 && sugs[0].valor === v.trim()) sugs = [];
+  }
+  iSug = sugs.length ? 0 : -1;
+  mostrarSugestoes();
+}
+function mostrarSugestoes() {
+  const box = $('#sugestoes');
+  box.classList.toggle('oculto', !sugs.length);
+  if (!sugs.length) { iSug = -1; return; }
+  box.innerHTML = sugs.map((s, i) => `<div class="sug${i === iSug ? ' sel' : ''}" data-i="${i}"><code>${esc(s.rotulo)}</code><span>${esc(s.info || '')}</span></div>`).join('')
+    + '<div class="sug-dica">Tab ou Enter completa · ↑↓ escolhe · Esc fecha</div>';
+  box.querySelector('.sel')?.scrollIntoView({ block: 'nearest' });
+}
+function aceitarSugestao(i) {
+  const s = sugs[i]; if (!s) return;
+  const c = $('#cmd'); c.value = s.valor; c.focus();
+  calcularSugestoes();
+}
+$('#sugestoes').onmousedown = ev => { const d = ev.target.closest('.sug'); if (d) { ev.preventDefault(); aceitarSugestao(+d.dataset.i); } };
+$('#cmd').oninput = () => { iHist = -1; calcularSugestoes(); };
+$('#cmd').onblur = () => setTimeout(() => { sugs = []; mostrarSugestoes(); }, 150);
+$('#cmd').onkeydown = ev => {
+  const aberto = sugs.length > 0;
+  const igual = aberto && sugs[Math.max(0, iSug)].valor.trim() === $('#cmd').value.trim();
+  if (aberto && (ev.key === 'Tab' || (ev.key === 'Enter' && iSug >= 0 && !igual))) { ev.preventDefault(); aceitarSugestao(Math.max(0, iSug)); return; }
+  if (aberto && ev.key === 'Escape') { sugs = []; mostrarSugestoes(); return; }
+  if (aberto && (ev.key === 'ArrowUp' || ev.key === 'ArrowDown')) {
+    ev.preventDefault();
+    iSug = (iSug + (ev.key === 'ArrowDown' ? 1 : -1) + sugs.length) % sugs.length;
+    return mostrarSugestoes();
+  }
+  if (ev.key !== 'ArrowUp' && ev.key !== 'ArrowDown') return;
+  ev.preventDefault();
+  iHist = Math.max(-1, Math.min(historico.length - 1, iHist + (ev.key === 'ArrowUp' ? 1 : -1)));
+  $('#cmd').value = iHist < 0 ? '' : historico[iHist];
+};
+
+// Ações rápidas: [rótulo, comando]; comando terminado em espaço pede argumento (vai para o campo)
+const rapidas = [
+  ['Servidor', [['Jogadores', 'players'], ['Mensagem', 'say '], ['Salvar', 'save'], ['Ajuda', 'help']]],
+  ['Mundo', [['Dia', 'day'], ['Noite', 'night'], ['Clima', 'weather']]],
+  ['Jogador', [['Dados', 'player '], ['Teleportar', 'tp ']]],
+  ['Spawn', [['Ver', 'verspawn'], ['Definir', 'setspawn '], ['Todos ao spawn', 'irspawn todos'], ['Remover', 'delspawn']]],
+  ['Conexão', [['Info de conexão', '/conexao'], ['Ver senha', '/mostrar_senha'], ['Trocar senha', '/definir_senha ']]],
+  ['Admin', [['Dar admin', 'admin '], ['Tirar admin', 'unadmin ']]],
+];
+$('#chips').innerHTML = rapidas.map(([g, itens]) => `<div class="grupo-rap"><b>${esc(g)}</b>${itens.map(([r, c]) =>
+  `<button class="chip${c.endsWith(' ') ? ' arg' : ''}" data-c="${esc(c)}" title="${esc(c.trim())}">${esc(r)}</button>`).join('')}</div>`).join('');
+$('#chips').onclick = async ev => {
+  const c = ev.target.dataset.c; if (c === undefined) return;
+  if (c.endsWith(' ')) { $('#cmd').value = c; $('#cmd').focus(); calcularSugestoes(); }
+  else if (c === 'delspawn') $('#b-spawn-del').click();
+  else enviar(c);
+};
+try { $('#rapidas').open = localStorage.getItem('rapidas') !== '0'; } catch { $('#rapidas').open = true; }
+$('#rapidas').ontoggle = () => { try { localStorage.setItem('rapidas', $('#rapidas').open ? '1' : '0'); } catch {} };
+
+// ---------- Backups ----------
+let backups = [], bkMapa = null;
+const nomesMotivo = { 'antes-de-iniciar': 'Antes de iniciar', periodico: 'Periódico', 'ao-desligar': 'Ao desligar', manual: 'Manual', 'antes-de-restaurar': 'Antes de restaurar' };
+async function carregarBackups() {
+  try { backups = (await api('backups')).backups || []; } catch (e) { return toast(e.message, true); }
+  const atual = bkMapa || st?.mapa || st?.ultimoMapa;
+  bkMapa = backups.some(b => b.mapa === atual) ? atual : backups[0]?.mapa ?? null;
+  mostrarBackups();
+}
+function mostrarBackups() {
+  $('#bk-mapas').innerHTML = backups.map(b => `<button class="aba-mapa" role="tab" aria-selected="${b.mapa === bkMapa}" data-m="${esc(b.mapa)}">${ic('map')}${esc(b.mapa)}<span class="n">${b.arquivos.length}</span></button>`).join('');
+  const arqs = backups.find(x => x.mapa === bkMapa)?.arquivos || [];
+  const total = arqs.reduce((s, a) => s + (+a.tamanhoMB || 0), 0);
+  $('#bk-resumo').innerHTML = [
+    kpi('archive', 'Backups deste mapa', arqs.length || null),
+    kpi('db', 'Espaço usado', arqs.length ? (total >= 1024 ? `${(total / 1024).toFixed(1)} GB` : `${total.toFixed(1)} MB`) : null),
+    kpi('history', 'Mais recente', arqs[0] ? relativo(arqs[0].data) : null, arqs[0] ? esc(new Date(arqs[0].data).toLocaleString('pt-BR')) : ''),
+  ].join('');
+  $('#bk-vazio').innerHTML = ic('archive') + (backups.length ? 'Nenhum backup deste mapa ainda.' : 'Nenhum backup ainda. Eles são criados ao iniciar, a cada autosave periódico e ao desligar.');
+  $('#bk-vazio').classList.toggle('oculto', arqs.length > 0);
+  $('#bk-lista').innerHTML = arqs.map(a => `<tr><td class="num">${esc(relativo(a.data))}<small>${esc(new Date(a.data).toLocaleString('pt-BR'))}</small></td>
+    <td><span class="tag t-${esc(a.motivo)}">${esc(nomesMotivo[a.motivo] || a.motivo || '—')}</span></td>
+    <td class="num">${esc(a.tamanhoMB)} MB</td><td style="color:var(--fraco2);font:12px var(--mono)">${esc(a.nome)}</td>
+    <td style="text-align:right"><button class="btn peq" data-a="${esc(a.nome)}">${ic('history')}Restaurar</button></td></tr>`).join('');
+  estadoBackups();
+}
+function estadoBackups() {
+  const ligado = !!st?.pid || (st && st.estado !== 'parado');
+  document.querySelectorAll('#bk-lista button[data-a]').forEach(b => { b.disabled = ligado; b.title = ligado ? 'Desligue o servidor para restaurar' : 'Volta o mapa para este backup'; });
+  $('#bk-aviso').classList.toggle('oculto', !ligado);
+  setHtml($('#bk-aviso'), ic('info') + '<div>Para restaurar um backup, desligue o servidor primeiro. Antes de restaurar, o estado atual vira um backup ("Antes de restaurar").</div>');
+  const outro = !!st?.pid && bkMapa !== st.mapa;
+  $('#bk-agora').disabled = !bkMapa || outro;
+  $('#bk-agora').title = outro ? `Com o servidor ligado, o backup é do mapa em execução (${st.mapa}).` : 'Salva e faz um backup .zip deste mapa';
+}
+$('#bk-mapas').onclick = ev => { const b = ev.target.closest('[data-m]'); if (b) { bkMapa = b.dataset.m; mostrarBackups(); } };
+$('#bk-atualizar').onclick = carregarBackups;
+$('#bk-agora').onclick = async () => { await acao('backup', { mapa: bkMapa }, 'Backup em andamento…'); setTimeout(carregarBackups, st?.pid ? 7000 : 800); };
+$('#bk-lista').onclick = async ev => {
+  const b = ev.target.closest('button[data-a]'); if (!b) return;
+  const mapa = bkMapa;
+  if (!await dialogo({ titulo: `Restaurar ${mapa}?`, texto: `O mapa volta para o backup ${b.dataset.a}.\nO estado atual vira um backup antes, então dá para desfazer.`, ok: 'Restaurar', perigo: true, icone: 'history' })) return;
+  try { await api('restaurar', { mapa, arquivo: b.dataset.a }); toast('Backup restaurado.'); carregarBackups(); }
+  catch (e) { toast(e.message, true); }
+};
+
+// ---------- Configuração ----------
+const campos = {
+  Nome: ['Nome do servidor', 'Aparece na lista de servidores.'],
+  Senha: ['Senha', 'Vazio = sem senha. Vale ao reiniciar o servidor.'],
+  MaxJogadores: ['Máximo de jogadores', ''],
+  Porta: ['Porta', 'Padrão 27015. O Unturned usa também a porta seguinte.'],
+  Owner_SteamID64: ['Seu SteamID64', 'Dá admin no chat para você (/give etc.).'],
+  Perspectiva: ['Perspectiva', 'Câmera permitida: ambas, 1ª pessoa, 3ª pessoa ou só em veículo.'],
+  PvP: ['PvP', 'Desligado = PvE.'],
+  Cheats: ['Cheats', 'Libera comandos de cheat para admins.'],
+  Internet: ['Servidor de internet', 'Desligado = só rede local (LAN).'],
+  GSLT: ['GSLT (token Steam)', 'Opcional: para aparecer na lista pública (app 304930).'],
+  AutosaveMinutos: ['Autosave a cada (min)', ''],
+  BackupACadaMinutos: ['Backup a cada (min)', 'Feito logo depois de um autosave.'],
+  BackupsMantidosPorMapa: ['Backups mantidos', 'Por tipo de backup, por mapa.'],
+  SpawnRespeitaCama: ['Spawn fixo respeita cama', 'Ligado = quem escolhe renascer na cama continua na cama. Desligado = todos vão pro spawn fixo.'],
+  AtualizarAoIniciar: ['Atualizar ao iniciar', 'Roda o SteamCMD antes de abrir (mantém a versão igual à do jogo).'],
+  PortaPainel: ['Porta deste painel', 'Vale ao reabrir o painel.'],
+  MapasWorkshop: ['Mapas da Workshop', 'Nome exato do mapa e ID da Workshop.'],
+  ModsWorkshop: ['Mods da Workshop', 'IDs separados por vírgula.'],
+};
+const secoes = [
+  // [título, ícone, chaves, coluna (0 = esquerda, 1 = direita, 2 = largura toda)]
+  ['Servidor', 'server', ['Nome', 'Senha', 'MaxJogadores', 'Perspectiva'], 0],
+  ['Rede e conexão', 'globe', ['Porta', 'Internet', 'GSLT', 'PortaPainel'], 0],
+  ['Regras do jogo', 'shield', ['PvP', 'Cheats', 'SpawnRespeitaCama'], 1],
+  ['Saves, backups e atualização', 'db', ['AutosaveMinutos', 'BackupACadaMinutos', 'BackupsMantidosPorMapa', 'AtualizarAoIniciar'], 1],
+  ['Administração', 'user', ['Owner_SteamID64'], 1],
+  ['Workshop', 'package', ['MapasWorkshop', 'ModsWorkshop'], 2],
+];
+const limites = { Porta: [1, 65535], PortaPainel: [1, 65535], MaxJogadores: [1, 200], AutosaveMinutos: [1, 1440], BackupACadaMinutos: [1, 10080], BackupsMantidosPorMapa: [1, 999] };
+const perspectivas = [['Both', 'Ambas (1ª e 3ª pessoa)'], ['First', '1ª pessoa'], ['Third', '3ª pessoa'], ['Vehicle', '3ª pessoa só em veículo']];
+let cfg = null, cfgBase = '', cfgSujo = false;
+function htmlCampo(k, v) {
+  const [rot, desc] = campos[k] || [k, ''];
+  const cab = `<label for="cf-${k}">${esc(rot)}${desc ? `<span class="desc">${esc(desc)}</span>` : ''}</label>`;
+  if (typeof v === 'boolean')
+    return `<div class="cmp linha"><div><span class="rotulo">${esc(rot)}</span>${desc ? `<span class="desc">${esc(desc)}</span>` : ''}</div>
+      <label class="switch grande" aria-label="${esc(rot)}"><input type="checkbox" data-k="${k}" ${v ? 'checked' : ''}></label></div>`;
+  let ctl;
+  if (k === 'Perspectiva') ctl = `<select id="cf-${k}" data-k="${k}" style="max-width:280px">${perspectivas.map(([o, t]) => `<option value="${o}" ${o === v ? 'selected' : ''}>${t}</option>`).join('')}</select>`;
+  else if (typeof v === 'number') { const [mi, ma] = limites[k] || []; ctl = `<input type="number" id="cf-${k}" data-k="${k}" value="${v}" ${mi ? `min="${mi}" max="${ma}"` : ''}>`; }
+  else if (k === 'MapasWorkshop') ctl = `<div id="cf-mapas">${v.map(linhaMapa).join('')}</div><div><button class="btn peq" type="button" id="cf-add">${ic('plus')}Adicionar mapa</button></div>`;
+  else if (k === 'ModsWorkshop') ctl = `<input type="text" id="cf-${k}" data-k="${k}" value="${esc(v.join(', '))}" placeholder="Ex.: 2136497468, 1983200271">`;
+  else if (k === 'Senha' || k === 'GSLT') ctl = `<div class="senha"><input type="password" id="cf-${k}" data-k="${k}" value="${esc(v)}" autocomplete="off"><button class="btn icone" type="button" data-ver="cf-${k}" title="Mostrar/ocultar">${ic('eye')}</button></div>`;
+  else if (typeof v === 'string') ctl = `<input type="text" id="cf-${k}" data-k="${k}" value="${esc(v)}">`;
+  else return '';
+  return `<div class="cmp">${cab}${ctl}<span class="erro-msg oculto"></span></div>`;
+}
+async function carregarConfig() {
+  try { cfg = JSON.parse((await api('config')).texto); } catch (e) { return toast(e.message, true); }
+  if (cfg.PortaPainel === undefined) cfg.PortaPainel = 8090;
+  const usados = new Set(secoes.flatMap(s => s[2]));
+  const outros = Object.keys(cfg).filter(k => !usados.has(k));
+  const lista = outros.length ? [...secoes, ['Outros', 'sliders', outros, 2]] : secoes;
+  const colunas = ['', '', ''];
+  for (const [titulo, icone, chaves, col] of lista) {
+    const corpo = chaves.filter(k => k in cfg).map(k => htmlCampo(k, cfg[k])).join('');
+    if (corpo) colunas[col] += `<div class="card"><div class="card-topo"><h2>${ic(icone)}${esc(titulo)}</h2></div><div class="campos">${corpo}</div></div>`;
+  }
+  $('#cf-form').innerHTML = `<div class="cf-col">${colunas[0]}</div><div class="cf-col">${colunas[1]}</div><div class="cf-col largo">${colunas[2]}</div>`;
+  $('#cf-topo').innerHTML = ic('info') + '<span>As mudanças valem no próximo início do servidor. Detalhes do Hard (loot, zumbis…) ficam em <code>servidor\\Servers\\Principal\\Config.txt</code>.</span>';
+  $('#cf-add')?.addEventListener('click', () => { $('#cf-mapas').insertAdjacentHTML('beforeend', linhaMapa({ Nome: '', Id: '' })); $('#cf-mapas .linha-mapa:last-child input').focus(); marcarSujo(); });
+  cfgBase = JSON.stringify(coletarConfig());
+  marcarSujo();
+}
+function linhaMapa(m) {
+  return `<div class="linha-mapa"><input type="text" placeholder="Nome exato do mapa" value="${esc(m.Nome)}" aria-label="Nome do mapa"><input type="text" inputmode="numeric" placeholder="ID da Workshop" value="${esc(m.Id)}" aria-label="ID da Workshop">
+    <button class="btn icone perigo" type="button" data-rm title="Remover mapa">${ic('trash')}</button></div>`;
+}
+function coletarConfig() {
+  const novo = { ...cfg };
+  document.querySelectorAll('#cf-form [data-k]').forEach(el => {
+    const k = el.dataset.k;
+    if (el.type === 'checkbox') novo[k] = el.checked;
+    else if (el.type === 'number') novo[k] = Number(el.value);
+    else if (k === 'ModsWorkshop') novo[k] = el.value.split(/[\s,;]+/).filter(Boolean).map(Number).filter(n => n > 0);
+    else novo[k] = el.value;
+  });
+  if ('MapasWorkshop' in cfg) novo.MapasWorkshop = [...document.querySelectorAll('#cf-mapas .linha-mapa')].map(l => {
+    const [n, id] = l.querySelectorAll('input'); return { Nome: n.value.trim(), Id: Number(id.value.trim()) };
+  }).filter(m => m.Nome && m.Id > 0);
+  return novo;
+}
+function marcarSujo() {
+  cfgSujo = !!cfg && JSON.stringify(coletarConfig()) !== cfgBase;
+  $('#barra-cf').classList.toggle('mostrar', cfgSujo && !$('#aba-config').classList.contains('oculto'));
+}
+function validarConfig() {
+  let primeiro = null;
+  document.querySelectorAll('#cf-form [data-k]').forEach(el => {
+    const k = el.dataset.k, [mi, ma] = limites[k] || [];
+    let erro = '';
+    if (['Nome'].includes(k) && !el.value.trim()) erro = 'Obrigatório.';
+    if (el.type === 'number' && (el.value === '' || isNaN(+el.value))) erro = 'Informe um número.';
+    else if (mi !== undefined && (+el.value < mi || +el.value > ma)) erro = `Use um valor entre ${mi} e ${ma}.`;
+    el.classList.toggle('invalido', !!erro);
+    const msg = el.closest('.cmp')?.querySelector('.erro-msg');
+    if (msg) { msg.textContent = erro; msg.classList.toggle('oculto', !erro); }
+    if (erro && !primeiro) primeiro = el;
+  });
+  if (primeiro) { primeiro.focus(); primeiro.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+  return !primeiro;
+}
+$('#cf-form').addEventListener('input', marcarSujo);
+$('#cf-form').addEventListener('change', marcarSujo);
+$('#cf-form').addEventListener('click', ev => {
+  const rm = ev.target.closest('[data-rm]'); if (rm) { rm.parentElement.remove(); marcarSujo(); return; }
+  const ver = ev.target.closest('[data-ver]');
+  if (ver) { const i = document.getElementById(ver.dataset.ver); const mostrar = i.type === 'password'; i.type = mostrar ? 'text' : 'password'; ver.innerHTML = ic(mostrar ? 'eyeoff' : 'eye'); }
+});
+$('#cf-recarregar').onclick = () => { cfgSujo = false; carregarConfig(); };
+$('#cf-salvar').onclick = async () => {
+  if (!validarConfig()) return toast('Corrija os campos destacados.', true);
+  const novo = coletarConfig();
+  try { await api('config', { texto: JSON.stringify(novo, null, 2) }); cfg = novo; toast('Configuração salva. Vale no próximo início do servidor.'); cfgSujo = false; carregarConfig(); atualizarStatus(); }
+  catch (e) { toast(e.message, true); }
+};
+window.addEventListener('beforeunload', ev => { if (cfgSujo) { ev.preventDefault(); ev.returnValue = ''; } });
+
+irPara(location.hash.slice(1));
+atualizarStatus(); atualizarLog();
+setInterval(atualizarStatus, 2000);
+setInterval(atualizarLog, 1000);
+</script>
+</body>
+</html>

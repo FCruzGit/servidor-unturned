@@ -1,0 +1,37 @@
+{
+  "Nome": "SERVER UNTURNED",
+  "Porta": 27015,
+  "MaxJogadores": 12,
+  "Senha": "",
+  "Owner_SteamID64": "",
+  "Perspectiva": "Both",
+  "PvP": false,
+  "Cheats": false,
+  "Internet": true,
+  "GSLT": "",
+  "AutosaveMinutos": 5,
+  "BackupACadaMinutos": 30,
+  "BackupsMantidosPorMapa": 3,
+  "AtualizarAoIniciar": true,
+  "SpawnRespeitaCama": true,
+  "PortaPainel": 8090,
+  "MapasWorkshop": [
+    {
+      "Nome": "Rio de Janeiro Remastered",
+      "Id": 3416057692
+    },
+    {
+      "Nome": "Rio de Janeiro",
+      "Id": 1821848824
+    },
+    {
+      "Nome": "France",
+      "Id": 1975500516
+    },
+    {
+      "Nome": "Limestone",
+      "Id": 3565225438
+    }
+  ],
+  "ModsWorkshop": []
+}
