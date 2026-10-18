@@ -612,7 +612,7 @@ async function atualizarStatus() {
 
   // Mapas
   const sel = $('#mapa'), atual = sel.value || st.ultimoMapa;
-  const opts = st.mapas.map(x => `<option value="${esc(x.nome)}">${esc(x.nome)}${x.workshop ? ' (Workshop)' : ''}${x.temSave ? ' — com save' : ''}</option>`).join('');
+  const opts = st.mapas.map(x => `<option value="${esc(x.nome)}">${esc(x.nome)}${x.workshop ? ' (Workshop)' : ''}${x.temSave ? ' / Mundo salvo' : ''}</option>`).join('');
   if (sel.dataset.opts !== opts) { sel.innerHTML = opts; sel.dataset.opts = opts; sel.value = atual; }
 
   const ocupado = ['atualizando', 'parando'].includes(e);

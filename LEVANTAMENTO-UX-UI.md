@@ -18,7 +18,7 @@ Legenda de prioridade: **Alta** = atrapalha o uso ou causa erro; **Média** = at
 | # | Problema | Prioridade | Solução aplicada |
 |---|---|---|---|
 | 2.1 | Todos os botões têm o mesmo peso. Ações do ciclo de vida (Iniciar/Reiniciar/Desligar) e de manutenção (Salvar/Backup/Atualizar) ficam lado a lado, separadas só por um traço fino. | Média | Dois grupos rotulados ("Servidor" e "Manutenção"), com ícones. Iniciar fica como primário e Desligar como perigo. |
-| 2.2 | O seletor de mapa não tem rótulo, e "tem save" fica colado ao nome. | Média | Rótulo "Mapa". As opções mostram "— com save" e "(Workshop)". |
+| 2.2 | O seletor de mapa não tem rótulo, e "tem save" fica colado ao nome. | Média | Rótulo "Mapa". As opções mostram "/ Mundo salvo" e "(Workshop)". |
 | 2.3 | Confirmações usam `confirm()`/`prompt()` nativos: são feios, não explicam as consequências e no ban fazem **duas perguntas seguidas** (motivo, depois horas, em texto livre). | Alta | **Diálogos próprios** (`<dialog>`), com título, explicação e botão de perigo em vermelho. O ban vira um formulário único, com motivo e duração em lista (1 h, 24 h, 7 dias, 30 dias, permanente). |
 
 ## 3. Console
